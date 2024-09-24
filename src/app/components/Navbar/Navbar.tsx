@@ -76,7 +76,7 @@ const Navbar = () => {
                                 </div>
                                 
                                 {/* <button className='flex justify-end text-xl font-medium bg-bgpink text-pink py-4 px-4 lg:px-8 navbutton rounded-full hover:text-black'>Sign in</button> */}
-                                <Signindialog />
+                                <Signindialog/>
                             </div>
                         </div>
 

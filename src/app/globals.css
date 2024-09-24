@@ -109,5 +109,8 @@ html:not([data-scroll="0"]) .navbar {
   padding-right: 87px;
 }
 
+.table-responsive {
+  overflow-x: auto;
+}
 
 

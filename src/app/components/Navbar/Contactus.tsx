@@ -1,58 +1,79 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import Link from 'next/link';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const Contactusform = () => {
     const [isOpen, setIsOpen] = useState(false);
-
-    // Estado para los valores de entrada
     const [inputValues, setInputValues] = useState({
         nombre: '',
         correo: '',
         mensaje: ''
     });
+    const [captchaValido, setCaptchaValido] = useState<boolean | null>(null);
+    const captcha = useRef<ReCAPTCHA | null>(null);
+    const [loading, setLoading] = useState(false); // Estado para manejar el envío
 
-    // Manejador de cambio de valores de entrada
-    const handleChange = (e: { target: { name: string; value: string; }; }) => {
+    const handleChange = (e: { target: { name: string; value: string } }) => {
         const { name, value } = e.target;
         setInputValues(prevState => ({ ...prevState, [name]: value }));
     };
 
-    // Manejador del clic del botón de enviar
-    const handleClick = () => {
-        alert(`Nombre: ${inputValues.nombre}, Correo electrónico: ${inputValues.correo}, Mensaje: ${inputValues.mensaje}`);
-        setIsOpen(false);
+    const handleCaptcha = () => {
+        setCaptchaValido(true);
+        console.log('El usuario ha verificado el captcha.');
     };
 
-    // Manejador de envío del formulario
-    const handleSubmit = (event: { preventDefault: () => void; }) => {
+    const handleSubmit = async (event: { preventDefault: () => void }) => {
         event.preventDefault();
-        // Aquí puedes manejar la lógica de envío del formulario a un servidor o servicio de correo.
+        if (!captchaValido) {
+            console.log('Por favor acepta el Captcha');
+            setCaptchaValido(false);
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await fetch('/api/enviar-mensaje', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(inputValues),
+            });
+
+            if (response.ok) {
+                alert('Mensaje enviado correctamente');
+                setIsOpen(false);
+                setInputValues({ nombre: '', correo: '', mensaje: '' });
+                setCaptchaValido(null);
+            } else {
+                console.error('Error al enviar el mensaje');
+            }
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Verificar si algún campo está vacío
-    const isDisabled = Object.values(inputValues).some((value) => value === '');
-
-    const closeModal = () => {
-        setIsOpen(false);
-    };
-
-    const openModal = () => {
-        setIsOpen(true);
-    };
+    const isDisabled = Object.values(inputValues).some(value => value === '') || !captchaValido;
 
     return (
         <>
-            <div className="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto md:ml-6 sm:pr-0">
-                <div className='hidden lg:block'>
-                    <button type="button" className='justify-end text-xl font-semibold bg-transparent py-4 px-6 lg:px-12 navbutton rounded-full hover:bg-navyblue hover:text-white' onClick={openModal}>
-                        Contáctanos
-                    </button>
-                </div>
+            <div className="flex items-center pr-2 sm:pr-0">
+                <button
+                    type="button"
+                    className="text-xl font-semibold bg-transparent py-4 px-6 rounded-full hover:bg-navyblue hover:text-white"
+                    onClick={() => setIsOpen(true)}
+                >
+                    Contáctanos
+                </button>
             </div>
 
             <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-50" onClose={closeModal}>
+                <Dialog as="div" className="relative z-50" onClose={() => setIsOpen(false)}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -77,19 +98,20 @@ const Contactusform = () => {
                                 leaveTo="opacity-0 scale-95"
                             >
                                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-
-                                    <div className="py-8 lg:py-8 px-4 mx-auto max-w-screen-md">
-                                        <div className="flex flex-shrink-0 items-center justify-center">
-                                            <Link href="/" className='text-2xl sm:text-4xl font-semibold text-black'>
+                                    <div className="py-8 px-4 mx-auto max-w-screen-md">
+                                        <div className="flex items-center justify-center">
+                                            <Link href="/" className="text-2xl sm:text-4xl font-semibold text-black">
                                                 Desgy Solutions
                                             </Link>
                                         </div>
-                                        <p className="mb-8 lg:mb-16 mt-8 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">
+                                        <p className="mb-8 lg:mb-16 mt-8 font-light text-center text-gray-500 sm:text-xl">
                                             ¿Quieres contactarnos? ¿Deseas enviarnos un comentario?
                                         </p>
-                                        <form action="#" className="space-y-8" onSubmit={handleSubmit}>
+                                        <form onSubmit={handleSubmit} className="space-y-8">
                                             <div>
-                                                <label htmlFor="nombre" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Tu Nombre</label>
+                                                <label htmlFor="nombre" className="block mb-2 text-sm font-medium text-gray-900">
+                                                    Tu Nombre
+                                                </label>
                                                 <input
                                                     id="nombre"
                                                     name="nombre"
@@ -97,12 +119,14 @@ const Contactusform = () => {
                                                     onChange={handleChange}
                                                     type="text"
                                                     required
-                                                    className="block w-full appearance-none rounded-md border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                    className="block w-full rounded-md border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                                     placeholder="Nombre..."
                                                 />
                                             </div>
                                             <div>
-                                                <label htmlFor="correo" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Tu Correo Electrónico</label>
+                                                <label htmlFor="correo" className="block mb-2 text-sm font-medium text-gray-900">
+                                                    Tu Correo Electrónico
+                                                </label>
                                                 <input
                                                     id="correo"
                                                     name="correo"
@@ -110,28 +134,40 @@ const Contactusform = () => {
                                                     onChange={handleChange}
                                                     type="email"
                                                     required
-                                                    className="block w-full appearance-none rounded-md border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                    className="block w-full rounded-md border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                                     placeholder="correo@ejemplo.com"
                                                 />
                                             </div>
                                             <div className="sm:col-span-2">
-                                                <label htmlFor="mensaje" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Tu Mensaje</label>
+                                                <label htmlFor="mensaje" className="block mb-2 text-sm font-medium text-gray-900">
+                                                    Tu Mensaje
+                                                </label>
                                                 <textarea
                                                     id="mensaje"
                                                     name="mensaje"
                                                     value={inputValues.mensaje}
                                                     onChange={handleChange}
-                                                    className="block w-full appearance-none rounded-md border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                    required
+                                                    className="block w-full rounded-md border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                                     placeholder="Deja un comentario..."
-                                                ></textarea>
+                                                />
                                             </div>
+                                            <div className="recaptcha">
+                                                <ReCAPTCHA
+                                                    ref={captcha}
+                                                    sitekey="6Lf8YUoqAAAAAN43ogNY8IRPCZ2afgRgL7lPmD-3"
+                                                    onChange={handleCaptcha}
+                                                />
+                                            </div>
+                                            {captchaValido === false && (
+                                                <div className="error text-red-500">Por favor acepta el Captcha.</div>
+                                            )}
                                             <button
                                                 type="submit"
-                                                onClick={handleClick}
-                                                disabled={isDisabled}
-                                                className="py-3 px-5 text-sm font-medium w-full text-center text-white rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                disabled={isDisabled || loading}
+                                                className="py-3 px-5 text-sm font-medium w-full text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                             >
-                                                Enviar mensaje
+                                                {loading ? 'Enviando...' : 'Enviar mensaje'}
                                             </button>
                                         </form>
                                     </div>
@@ -143,6 +179,6 @@ const Contactusform = () => {
             </Transition>
         </>
     );
-}
+};
 
 export default Contactusform;

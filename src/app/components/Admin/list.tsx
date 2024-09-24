@@ -42,7 +42,7 @@ const exampleUsuarios: Usuario[] = [
   }
 ];
 
-const ListadoUsuarios: React.FC = () => {
+const Listuser: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [usuarios, setUsuarios] = useState<Usuario[]>(exampleUsuarios);
 
@@ -126,4 +126,4 @@ const ListadoUsuarios: React.FC = () => {
   );
 };
 
-export default ListadoUsuarios;
+export default Listuser;

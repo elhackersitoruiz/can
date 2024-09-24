@@ -1,7 +1,8 @@
 "use client";
 import React from 'react';
 
-const CarnetVacunacion = () => {
+const Carnet = () => {
+  console.log("Componente Carnet renderizado");
   // Datos de ejemplo para mostrar en el carnet
   const mascota = {
     especie: "Perro",
@@ -138,4 +139,4 @@ const CarnetVacunacion = () => {
   );
 };
 
-export default CarnetVacunacion;
+export default Carnet;

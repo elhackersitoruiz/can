@@ -24,7 +24,7 @@ const Banner = () => {
                         <Fade direction={'up'} delay={1000} cascade damping={1e-1} triggerOnce={true}>
                             <div className='md:flex align-middle justify-center lg:justify-start'>
                                 <button className='text-xl w-full md:w-auto font-medium rounded-full text-white py-5 px-6 bg-[#39b0ec] lg:px-14 mr-6'>
-                                    <Link href='#cook-section'>Conoce a nuestros expertos</Link>
+                                    <Link href='#cook-section'>Conoce a nuestros equipo</Link>
                                 </button>
                                 <button className='flex border w-full md:w-auto mt-5 md:mt-0 border-[#39b0ec] justify-center rounded-full text-xl font-medium items-center py-5 px-10 text-[#39b0ec] hover:text-white hover:bg-[#39b0ec]'>
                                     <Link href='#about-section'>Nuestros Servicios</Link>

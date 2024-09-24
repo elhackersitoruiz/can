@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Contactusform from "./Contactus";
-import Signin from "./Signindialog";
+import Signindialog from "./Signindialog";
 
 interface NavigationItem {
     name: string;
@@ -32,7 +32,7 @@ const Data = () => {
                                 key={item.name}
                                 href={item.href}
                                 className={classNames(
-                                    item.current ? 'bg-gray-900 text-purple' : 'text-black hover:bg-gray-700 hover:text-purple',
+                                    item.current ? 'bg-gray-900 text-purple' : 'text-black  hover:text-purple',
                                     'block  py-2 rounded-md text-base font-medium'
                                 )}
                                 aria-current={item.current ? 'page' : undefined}
@@ -40,12 +40,10 @@ const Data = () => {
                                 {item.name}
                             </Link>
                         ))}
-                        <div className="mt-4"></div>
-                            <Signin/>
-                        
-                        <button className='flex justify-center text-base w-full font-medium rounded-full bg-transparent border border-bg[#39b0ec] text-[#39b0ec] py-3 px-4 lg:px-8 navbutton hover:text-white hover:bg-[#39b0ec]'>Contact us</button>
-
-                        {/* <Contactusform /> */}
+                        <div className="flex items-center pr-2 sm:pr-0"></div>
+                            <Signindialog/>
+                        <div className="flex items-center pr-2 sm:pr-0"></div>
+                            <Contactusform/>
                     </div>
                 </div>
             </div>
