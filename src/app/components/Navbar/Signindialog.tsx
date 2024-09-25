@@ -1,19 +1,20 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useRef, useState } from 'react';
 import { LockClosedIcon } from '@heroicons/react/20/solid';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ReCAPTCHA from "react-google-recaptcha";
 
 const Signin: React.FC = () => {
-    const mascota = {
-        especie: "Perro",
-        nombre: "Firulais",
-        raza: "Labrador",
-        fechaNacimiento: "2021-05-14",
-        color: "Marrón",
-        sexo: "Macho"
-    };
+    // const mascota = {
+    //     especie: "dasdsa",
+    //     nombre: "Firulais",
+    //     raza: "Labrador",
+    //     fechaNacimiento: "2021-05-14",
+    //     color: "Marrón",
+    //     sexo: "Macho"
+    // };
 
     const propietario = {
         nombre: "Juan Pérez",
@@ -39,9 +40,41 @@ const Signin: React.FC = () => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [captchaValido, setCaptchaValido] = useState(false);
-    const [usuarioValido, setUsuarioValido] = useState(false);
+    const [usuarioValido, setUsuarioValido] = useState(true);
+    const [mascota, setMascota] = useState({
+        especie: "foo",
+        nombre: "bar",
+        raza: "baz",
+        fecha_nacimiento: "2021-05-14",
+        talla: "foo",
+        peso: "foo",
+        color: "foo",
+        sexo: "bar"
+    });
     const captcha = useRef(null);
 
+
+    useEffect(() => {
+        // This will run only once when the component mounts
+        console.log("Component mounted");
+        fetch('http://localhost:8000/mascota/1/')
+            .then((response) => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setMascota(data); // Step 3: Update the mascota state with fetched data
+                console.log(data);
+                //setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching the mascota:', error);
+                //setError(error);
+                //setLoading(false);
+            });
+        }, []); // The empty array ensures it runs once, like componentDidMount
     const closeModal = () => {
         setIsOpen(false);
     };
@@ -123,10 +156,12 @@ const Signin: React.FC = () => {
       <div className="mb-12">
         <h2 className="text-2xl font-semibold mb-4 text-indigo-600">Identificación de la Mascota</h2>
         <div className="border p-6 rounded-lg shadow-md bg-gray-100">
-          <p className="mb-2"><strong>Especie:</strong> {mascota.especie}</p>
+          <p className="mb-2"><strong>Especie:</strong>{mascota.especie}</p>
           <p className="mb-2"><strong>Nombre:</strong> {mascota.nombre}</p>
           <p className="mb-2"><strong>Raza:</strong> {mascota.raza}</p>
-          <p className="mb-2"><strong>Fecha de Nacimiento:</strong> {mascota.fechaNacimiento}</p>
+          <p className="mb-2"><strong>Fecha de Nacimiento:</strong> {mascota.fecha_nacimiento}</p>
+          <p className="mb-2"><strong>Talla:</strong> {mascota.talla}</p>
+          <p className="mb-2"><strong>Peso:</strong> {mascota.peso}</p>
           <p className="mb-2"><strong>Color:</strong> {mascota.color}</p>
           <p className="mb-2"><strong>Sexo:</strong> {mascota.sexo}</p>
         </div>
