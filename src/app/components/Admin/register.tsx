@@ -34,6 +34,9 @@ const CarnetVacunacion = () => {
 
   const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
+    // Aca deberias hacer el post request y segun la respuesta que encuentres deberias
+    // redirigir al usuario a la pagina de carnet o mandar error x lo que sea.
+    // Como redirigir de una pagina de react a otra pagina de react.
     // Aquí puedes manejar el envío del formulario, como hacer una solicitud POST a tu servidor
     console.log('Datos del formulario:', formData);
   };
