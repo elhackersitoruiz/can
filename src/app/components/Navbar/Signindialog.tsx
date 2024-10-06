@@ -23,11 +23,6 @@ const Signin: React.FC = () => {
         telefono: "123-456-789"
     };
 
-    const vacunas = [
-        { fechaVacunacion: "2024-01-10", fechaRevacunacion: "2025-01-10", tipo: "Rabia", descripcion: "Vacuna anual contra la rabia." },
-        { fechaVacunacion: "2024-03-15", fechaRevacunacion: "2025-03-15", tipo: "Moquillo", descripcion: "Vacuna para prevenir el moquillo canino." }
-    ];
-
     const desparasitaciones = [
         { producto: "Drontal", fecha: "2024-02-20", peso: "20kg", proximaDesparasitacion: "2024-08-20" },
         { producto: "Milbemax", fecha: "2024-06-10", peso: "21kg", proximaDesparasitacion: "2024-12-10" }
@@ -51,13 +46,17 @@ const Signin: React.FC = () => {
         color: "foo",
         sexo: "bar"
     });
+    const [vacunas, setVacunas] =  useState([
+        { fecha_aplicacon: '2024-01-10', fecha_revacunacion: '2025-01-10', nombre: "Rabia", descripcion: "Vacuna anual contra la rabia." },
+        { fecha_aplicacon: '2024-01-10', fecha_revacunacion: '2025-01-10', nombre: "Moquillo", descripcion: "Vacuna para prevenir el moquillo canino." }
+    ]);
     const captcha = useRef(null);
 
 
     useEffect(() => {
         // This will run only once when the component mounts
         console.log("Component mounted");
-        fetch('http://localhost:8000/mascota/1/')
+        fetch('http://localhost:8000/mascota/3/')
             .then((response) => {
                 if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -66,6 +65,7 @@ const Signin: React.FC = () => {
             })
             .then((data) => {
                 setMascota(data); // Step 3: Update the mascota state with fetched data
+                setVacunas(data.vacunas)
                 console.log(data);
                 //setLoading(false);
             })
@@ -74,6 +74,17 @@ const Signin: React.FC = () => {
                 //setError(error);
                 //setLoading(false);
             });
+        // fetch('http://localhost:8000/vacunas/')
+        //     .then((response) => {
+        //         if (!response.ok) {
+        //         throw new Error('Network response was not ok');
+        //         }
+        //         return response.json();
+        //     }).then((data) => {
+        //         console.log(data);
+        //         setVacunas(data);
+        //         //setLoading(false);
+        //     })
         }, []); // The empty array ensures it runs once, like componentDidMount
     const closeModal = () => {
         setIsOpen(false);
@@ -193,9 +204,9 @@ const Signin: React.FC = () => {
           <tbody>
             {vacunas.map((vacuna, index) => (
               <tr key={index} className="bg-gray-100 border-b border-gray-200">
-                <td className="px-6 py-4">{vacuna.fechaVacunacion}</td>
-                <td className="px-6 py-4">{vacuna.fechaRevacunacion}</td>
-                <td className="px-6 py-4">{vacuna.tipo}</td>
+                <td className="px-6 py-4">{vacuna.fecha_aplicacion}</td>
+                <td className="px-6 py-4">{vacuna.fecha_revacunacion}</td>
+                <td className="px-6 py-4">{vacuna.nombre}</td>
                 <td className="px-6 py-4">{vacuna.descripcion}</td>
               </tr>
             ))}

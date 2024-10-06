@@ -19,7 +19,9 @@ const CarnetVacunacion = () => {
     nombrePropietario: '',
     direccionPropietario: '',
     dniPropietario: '',
-    telefonoPropietario: ''
+    telefonoPropietario: '',
+    tallaMascota: '',
+    pesoMascota: '',
   });
 
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
@@ -51,7 +53,9 @@ const CarnetVacunacion = () => {
       nombrePropietario: '',
       direccionPropietario: '',
       dniPropietario: '',
-      telefonoPropietario: ''
+      telefonoPropietario: '',
+      tallaMascota: '',
+      pesoMascota: '',
     });
     router.back(); // Navega a la página anterior
   };
@@ -63,7 +67,7 @@ const CarnetVacunacion = () => {
       {/* Apartado: Datos de la Mascota */}
       <div className="mb-12">
         <h2 className="text-2xl font-semibold mb-4 text-indigo-600">Datos de la Mascota</h2>
-        <form onSubmit={handleSubmit} className="border p-6 rounded-lg shadow-md bg-gray-100">
+        <form method="POST" className="border p-6 rounded-lg shadow-md bg-gray-100" action="http://localhost:8000/register_pet/">
           <div className="mb-4">
             <label htmlFor="nombreMascota" className="block text-sm font-medium text-gray-700">Nombre de la Mascota</label>
             <input
@@ -119,6 +123,30 @@ const CarnetVacunacion = () => {
               id="colorMascota"
               name="colorMascota"
               value={formData.colorMascota}
+              onChange={handleChange}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="colorMascota" className="block text-sm font-medium text-gray-700">Talla</label>
+            <input
+              type="text"
+              id="tallaMascota"
+              name="tallaMascota"
+              value={formData.tallaMascota}
+              onChange={handleChange}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="colorMascota" className="block text-sm font-medium text-gray-700">Peso</label>
+            <input
+              type="text"
+              id="pesoMascota"
+              name="pesoMascota"
+              value={formData.pesoMascota}
               onChange={handleChange}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
               required
@@ -231,6 +259,7 @@ const CarnetVacunacion = () => {
             <button
               type="submit"
               className="bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600"
+
             >
               Registrarse
             </button>

@@ -3,6 +3,8 @@ import Features from './components/Work/index';
 import Cook from './components/Cook/index';
 import Expert from './components/Expert/index';
 import Gallery from './components/Gallery/index';
+import Listuser from './components/Admin/list';
+import CarnetVacunacion from './components/Admin/register';
 
 
 export default function Home() {
@@ -13,7 +15,8 @@ export default function Home() {
       <Cook />
       <Expert />
       <Gallery />
-
+      <Listuser />
+      <CarnetVacunacion />
     </main>
   )
 }
